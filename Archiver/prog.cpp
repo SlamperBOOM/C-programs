@@ -3,7 +3,7 @@
 #include <malloc.h>
 #define countofsymb 256
 #define byte 8
-
+//структура для дерева Хаффмана
 typedef struct Tree
 {
     unsigned char symbol[countofsymb];
@@ -72,7 +72,7 @@ void ConvertFromIntToChar(int symbol, unsigned char* code)
     }
     code[byte] = '\0';
 }
-
+//пишем байт в файл
 void WriteByte(FILE* output, unsigned char* buffer)
 {
     buffer[byte] = '\0';
@@ -83,7 +83,7 @@ void WriteByte(FILE* output, unsigned char* buffer)
         buffer[i] = -1;
     }
 }
-
+//пишем бит и при заполнении байта пишем в файл
 void WriteBit(unsigned char* buffer, int* N, FILE* output, char bit)
 {
     if (*(N) == 8)
@@ -94,7 +94,7 @@ void WriteBit(unsigned char* buffer, int* N, FILE* output, char bit)
     buffer[*N] = bit;
     *(N) += 1;
 }
-
+//читаем байт из файла
 void ReadByte(FILE* input, unsigned char* buffer)
 {
     unsigned char symbol;
@@ -104,7 +104,7 @@ void ReadByte(FILE* input, unsigned char* buffer)
     }
     ConvertFromIntToChar((unsigned char)symbol, buffer);
 }
-
+//читаем бит и при необходимости читаем байт из файла
 char ReadBit(unsigned char* buffer, int* N, FILE* input)
 {
     if (*(N) == 8)
@@ -115,7 +115,7 @@ char ReadBit(unsigned char* buffer, int* N, FILE* input)
     *(N) += 1;
     return buffer[*(N)-1];
 }
-
+//строим дерево Хаффмана
 Tree* BuildHuffmanTree(int* population)
 {
     Tree* leaves[countofsymb];
@@ -180,7 +180,7 @@ Tree* BuildHuffmanTree(int* population)
     }
     return leaves[0];
 }
-
+//Восстанавливаем дерево Хаффмана из файла
 Tree* RecoverHuffmanTree(FILE* input, int* N, unsigned char* buffer)
 {
     Tree* codetree = (Tree*)malloc(sizeof(Tree));
@@ -205,7 +205,7 @@ Tree* RecoverHuffmanTree(FILE* input, int* N, unsigned char* buffer)
     }
     return codetree;
 }
-
+//Пишем дерево в файл
 void PrintHuffmanTree(Tree* codetree, FILE* output, int* N, unsigned char* buffer)
 {
     if (codetree == NULL)
@@ -252,7 +252,7 @@ void Compress(FILE* input)
     }
     Tree* codetree = BuildHuffmanTree(population);
     int depthoftree = CalcDepthOfTree(codetree);
-    //вывод сжатых данных
+    //запись сжатых данных
     FILE* output = fopen("out.txt", "wb");
     fwrite(&lengthoftext, sizeof(unsigned int), 1, output);
     int N = 0;
